@@ -39,31 +39,33 @@ How many different passwords within the range given in your puzzle input
 Your puzzle input is still 172851-675869.
 
 """
+from collections import defaultdict
+
 puzzle_input = '172851-675869'
 puzzle_input = puzzle_input.split('-')
 numbers = map(str, range(int(puzzle_input[0]), int(puzzle_input[1])))
 
 def check_rules(number):
     is_decrease = False
-    repeats = {}
-    for idx in range(len(number)):
-        if idx > 0 and number[idx] == number[idx - 1]:
-            if number[idx] not in repeats:
-                repeats[number[idx]] = 1
-            else:
-                repeats[number[idx]] += 1
-        if idx > 0 and number[idx] < number[idx - 1]:
-            is_decrease = True
+    repeats = defaultdict(int)
+
+    if sorted(number) != list(number):
+        is_decrease = True
+
+    for char in number:
+        if number.count(char) > 1:
+            repeats[char] += 1
+    
     return repeats, is_decrease
 
 part1 = 0
 part2 = 0
+
 for number in numbers:
     repeats, is_decrease = check_rules(number)
     if len(repeats) > 0 and not is_decrease:
         part1 += 1
-        is_adjacent = 1 in repeats.values()
-        if is_adjacent:
+        if 2 in repeats.values():
             part2 += 1
 
 print(part1, part2)
